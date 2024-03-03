@@ -1,0 +1,35 @@
+<div class="container mt-2">
+  <button type="submit" class="btn btn-outline-success" (click)="addRow()">Add Row</button>
+  <form [formGroup]="resourcesForms" (ngSubmit)="onSubmit()">
+    <div formArrayName="resourcesitems">
+      <table class="table">
+        <thead>
+          <tr>
+            @for(colums of displayedColumns;track colums){
+            <th>{{ colums }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let f of resourcesitems().controls; let i = index" [formGroupName]="i">
+            <td><input type="text" class="form-control" id="name" formControlName="name" /></td>
+            <td><input type="text" class="form-control" id="role" formControlName="role" /></td>
+            <td>
+              <input type="text" class="form-control" id="startDate" formControlName="startDate" />
+            </td>
+            <td>
+              <input type="text" class="form-control" id="endDate" formControlName="endDate" />
+            </td>
+            <td>
+              <input type="text" class="form-control" id="comment" formControlName="comment" />
+            </td>
+            <td>
+              <i class="fs-2 bi-trash-fill danger text-danger" (click)="removeRow(i)"></i>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <button type="submit" class="btn btn-success">Submit</button>
+  </form>
+</div>

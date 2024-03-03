@@ -1,0 +1,37 @@
+<div class="container mt-2">
+  <!-- <h4>All projects</h4> -->
+  <button type="submit" class="btn btn-outline-success" (click)="addRow()">Add Row</button>
+  <form [formGroup]="forms" (ngSubmit)="onSubmit()">
+    <div formArrayName="formitem">
+      <table class="table">
+        <thead>
+          <tr>
+            @for(colums of displayedColumns;track colums){
+            <th>{{ colums }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let f of getformitems().controls; let i = index" [formGroupName]="i">
+            <td>
+              <input type="text" class="form-control" id="date" formControlName="date" />
+            </td>
+            <td>
+              <input type="text" class="form-control" id="duration" formControlName="duration" />
+            </td>
+            <td>
+              <input type="text" class="form-control" id="links" formControlName="links" />
+            </td>
+            <td>
+              <input type="text" class="form-control" id="comments" formControlName="comments" />
+            </td>
+            <td>
+              <i class="fs-2 bi-trash-fill danger text-danger" (click)="removeRow(i)"></i>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <button type="submit" class="btn btn-success">Submit</button>
+  </form>
+</div>

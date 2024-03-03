@@ -1,0 +1,42 @@
+<div class="container">
+  <nav class="navbar navbar-expand-lg">
+    <div class="collapse navbar-collapse mb-2 pb-2" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="projectresources">Resources </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="approvedteam" routerLinkActive="active">Approved Team</a>
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="clientfeedback"
+            routerLinkActive="active"
+            ariaCurrentWhenActive="page"
+            >Client Feedback</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="projectupdates"
+            routerLinkActive="active"
+            ariaCurrentWhenActive="page"
+            >Project Updates</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="moms"
+            routerLinkActive="active"
+            ariaCurrentWhenActive="page"
+            >Moms of client meeting</a
+          >
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <router-outlet></router-outlet>
+</div>
