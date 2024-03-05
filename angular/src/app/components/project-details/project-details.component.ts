@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, RouterLink, RouterOutlet } from '@angular/router';
 
 @Component({
   standalone:true,
@@ -10,8 +10,13 @@ import { RouterLink, RouterOutlet } from '@angular/router';
 })
 export class ProjectDetailComponent implements OnInit {
 
+  id: string;
 
-  constructor() {}
+  constructor(
+    private route:ActivatedRoute
+  ) {
+    this.id = this.route.snapshot.params.id;
+  }
 
   ngOnInit(): void {
     console.log("working");

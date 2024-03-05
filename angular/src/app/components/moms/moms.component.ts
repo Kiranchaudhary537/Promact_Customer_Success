@@ -1,14 +1,17 @@
 import { NgFor } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormArray,
   FormBuilder,
+  FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { MeetingMinute } from 'src/app/Model/MomModel';
+import { MomService } from 'src/app/Services/momService';
 
 @Component({
   standalone: true,
@@ -18,27 +21,67 @@ import { RouterLink } from '@angular/router';
   imports: [RouterLink, ReactiveFormsModule, NgFor],
 })
 export class MomsComponent implements OnInit {
-  forms: FormGroup;
+  data: Array<MeetingMinute> = [];
+  projectId: string = '';
+  forms: FormGroup = new FormGroup({
+    formitem: new FormGroup({
+      date: new FormControl(''),
+      duration: new FormControl(''),
+      links: new FormControl(''),
+      comments: new FormControl(''),
+    }),
+  });
   displayedColumns = ['Date', 'Duration', 'MoM Link', 'Comments'];
 
-  constructor(private fb: FormBuilder) {}
-
-  ngOnInit(): void {
-    this.initializeForm();
+  constructor(
+    private fb: FormBuilder,
+    private route: ActivatedRoute,
+    private meetingMinuteService: MomService
+  ) {
+    this.projectId = this.route.snapshot.pathFromRoot[1].params['id'];
   }
 
-  initializeForm(): void {
+  ngOnInit(): void {
+    this.meetingMinuteService.getAllItem().subscribe(
+      data => {
+        console.log('Projects:', data);
+        this.data = data;
+        this.addExistingData(data);
+      },
+      error => {
+        console.error('Error fetching projects:', error);
+      }
+    );
+  }
+
+  addExistingData(data: any): void {
+    let existingData: any = [];
+    data.forEach((element: any) => {
+      existingData.push(this.existingDataFormGroup(element));
+    });
     this.forms = this.fb.group({
-      formitem: this.fb.array([this.createFormGroup()]),
+      formitem:
+        existingData == 0 ? this.fb.array([this.createFormGroup()]) : this.fb.array(existingData),
     });
   }
 
   createFormGroup(): FormGroup {
     return this.fb.group({
+      id: [''],
       date: ['', Validators.required],
       duration: ['', Validators.required],
       links: ['', Validators.required],
       comments: ['', Validators.required],
+    });
+  }
+
+  existingDataFormGroup(e: any): FormGroup {
+    return this.fb.group({
+      id: [e.id],
+      date: [e.meetingDate, Validators.required],
+      duration: [e.duration, Validators.required],
+      links: [e.moMLink, Validators.required],
+      comments: [e.comments, Validators.required],
     });
   }
 
@@ -53,16 +96,41 @@ export class MomsComponent implements OnInit {
 
   removeRow(index: number): void {
     const approveteamArray = this.forms.get('formitem') as FormArray;
+    const controlAtIndex = approveteamArray.at(index);
+    this.meetingMinuteService.deleteItem(controlAtIndex.value.id).subscribe(
+      data => {
+        console.log(data);
+      },
+      error => {
+        console.error('erorr');
+      }
+    );
     approveteamArray.removeAt(index);
   }
 
   onSubmit(): void {
-    console.log('clicked');
-    console.log(this.forms);
     if (this.forms.valid) {
-      console.log(this.forms.value);
-      // Here you can submit the form data to your Angular Resource
-      // For now, let's just log the form values
+      this.forms.value.formitem.forEach(async e => {
+        try {
+          const modelDate: MeetingMinute = {
+            projectId: this.projectId,
+            duration: e.duration,
+            meetingDate: e.date,
+            moMLink: e.links,
+            comments: e.comments,
+          };
+          console.log(e);
+          if (e.id != '') {
+            const data = await this.meetingMinuteService.updateItem(e.id, modelDate).toPromise();
+            console.log(data);
+          } else {
+            const data = await this.meetingMinuteService.createItem(modelDate).toPromise();
+            console.log(data);
+          }
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      });
     }
   }
 }

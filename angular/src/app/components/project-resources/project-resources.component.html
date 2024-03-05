@@ -12,8 +12,16 @@
         </thead>
         <tbody>
           <tr *ngFor="let f of resourcesitems().controls; let i = index" [formGroupName]="i">
-            <td><input type="text" class="form-control" id="name" formControlName="name" /></td>
+            <!-- <td><input type="text" class="form-control" id="name" formControlName="name" /></td> -->
             <td><input type="text" class="form-control" id="role" formControlName="role" /></td>
+            <td>
+              <input
+                type="text"
+                class="form-control"
+                id="allocationPercentage"
+                formControlName="allocationPercentage"
+              />
+            </td>
             <td>
               <input type="text" class="form-control" id="startDate" formControlName="startDate" />
             </td>

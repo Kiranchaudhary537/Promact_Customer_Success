@@ -7,7 +7,6 @@ namespace Promact.CustomerSuccess.Platform.Entities
 {
     public class Phase : Entity<Guid>
     {
-        public Phase(Guid id) : base(id) { }
         public string Title { get; set; }
 
         public DateTime StartDate { get; set; }

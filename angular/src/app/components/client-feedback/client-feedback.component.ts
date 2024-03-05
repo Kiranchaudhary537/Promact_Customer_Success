@@ -4,11 +4,14 @@ import {
   AbstractControl,
   FormArray,
   FormBuilder,
+  FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ClientFeedback } from 'src/app/Model/ClientFeedbackModel';
+import { ClientFeedbackService } from 'src/app/Services/clientfeedbackService';
 
 @Component({
   standalone: true,
@@ -18,28 +21,75 @@ import { RouterLink } from '@angular/router';
   imports: [RouterLink, ReactiveFormsModule, NgFor],
 })
 export class ClientFeedbackComponent implements OnInit {
-  forms: FormGroup;
-  displayedColumns = ['Feedback type', 'Receive date', ' Detailed Feeback', 'Action Taken','Closure Date'];
+  data: Array<ClientFeedback> = [];
+  projectId: string = '';
+  forms: FormGroup = new FormGroup({
+    formitem: new FormGroup({
+      feedbacktype: new FormControl(''),
+      receivedate: new FormControl(''),
+      details: new FormControl(''),
+      action: new FormControl(''),
+      closure: new FormControl(''),
+    }),
+  });
+  displayedColumns = [
+    'Feedback type',
+    'Receive date',
+    'Detailed Feeback',
+    'Action Taken',
+    'Closure Date',
+  ];
 
-  constructor(private fb: FormBuilder) {}
-
-  ngOnInit(): void {
-    this.initializeForm();
+  constructor(
+    private fb: FormBuilder,
+    private route: ActivatedRoute,
+    private clientFeedbackService: ClientFeedbackService
+  ) {
+    this.projectId = this.route.snapshot.pathFromRoot[1].params['id'];
   }
 
-  initializeForm(): void {
+  ngOnInit(): void {
+    this.clientFeedbackService.getAllItem().subscribe(
+      data => {
+        console.log('Projects:', data);
+        this.data = data;
+        this.addExistingData(data);
+      },
+      error => {
+        console.error('Error fetching projects:', error);
+      }
+    );
+  }
+  addExistingData(data: any): void {
+    let existingData: any = [];
+    data.forEach((element: any) => {
+      existingData.push(this.existingDataFormGroup(element));
+    });
     this.forms = this.fb.group({
-      formitem: this.fb.array([this.createFormGroup()]),
+      formitem:
+        existingData == 0 ? this.fb.array([this.createFormGroup()]) : this.fb.array(existingData),
     });
   }
 
   createFormGroup(): FormGroup {
     return this.fb.group({
+      id: [''],
       feedbacktype: ['', Validators.required],
       receivedate: ['', Validators.required],
       details: ['', Validators.required],
       action: ['', Validators.required],
-      closure: ['', Validators.required]
+      closure: ['', Validators.required],
+    });
+  }
+
+  existingDataFormGroup(e: any): FormGroup {
+    return this.fb.group({
+      id: [e.id],
+      feedbacktype: [e.feedbackType, Validators.required],
+      receivedate: [e.dateReceived, Validators.required],
+      details: [e.detailedFeedback, Validators.required],
+      action: [e.actionTaken, Validators.required],
+      closure: [e.closureDate, Validators.required],
     });
   }
 
@@ -54,16 +104,42 @@ export class ClientFeedbackComponent implements OnInit {
 
   removeRow(index: number): void {
     const approveteamArray = this.forms.get('formitem') as FormArray;
+    const controlAtIndex = approveteamArray.at(index);
+    this.clientFeedbackService.deleteItem(controlAtIndex.value.id).subscribe(
+      data => {
+        console.log(data);
+      },
+      error => {
+        console.error('erorr');
+      }
+    );
     approveteamArray.removeAt(index);
   }
 
   onSubmit(): void {
-    console.log('clicked');
-    console.log(this.forms);
     if (this.forms.valid) {
-      console.log(this.forms.value);
-      // Here you can submit the form data to your Angular Resource
-      // For now, let's just log the form values
+      this.forms.value.formitem.forEach(async e => {
+        try {
+          const modelDate: ClientFeedback = {
+            projectId: this.projectId,
+            dateReceived: e.receivedate,
+            feedbackType: e.feedbacktype,
+            detailedFeedback: e.details,
+            actionTaken: e.action,
+            closureDate: e.closure,
+          };
+          console.log(e);
+          if (e.id != '') {
+            const data = await this.clientFeedbackService.updateItem(e.id, modelDate).toPromise();
+            console.log(data);
+          } else {
+            const data = await this.clientFeedbackService.createItem(modelDate).toPromise();
+            console.log(data);
+          }
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      });
     }
   }
 }

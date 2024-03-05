@@ -1,45 +1,73 @@
-<div class="container mt-2">
-  <!-- <h4>All projects</h4> -->
-  <button type="submit" class="btn btn-outline-success" (click)="addRow()">Add Row</button>
-  <form [formGroup]="approvedTeamForms" (ngSubmit)="onSubmit()">
-    <div formArrayName="approvedteams">
-      <table class="table">
-        <thead>
-          <tr>
-            @for(colums of displayedColumns;track colums){
-            <th>{{ colums }}</th>
-            }
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let f of approvedteams().controls; let i = index" [formGroupName]="i">
-            <td>
-              <input
-                type="text"
-                class="form-control"
-                id="noofresources"
-                formControlName="noofresources"
-              />
-            </td>
-            <td><input type="text" class="form-control" id="role" formControlName="role" /></td>
-            <td>
-              <input
-                type="text"
-                class="form-control"
-                id="availability"
-                formControlName="availability"
-              />
-            </td>
-            <td>
-              <input type="text" class="form-control" id="duration" formControlName="duration" />
-            </td>
-            <td>
-              <i class="fs-2 bi-trash-fill danger text-danger" (click)="removeRow(i)"></i>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+<div class="container mt-2 mb-2">
+  <h2>Select Phase</h2>
+  <form [formGroup]="phaseForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <select
+        class="form-control"
+        formControlName="selectedPhase"
+        id="phase"
+        (ngModelChange)="onSelectedPhaseChange($event)"
+      >
+        @for(phase of allPhases;track phase){ @if(phase.projectId==projectId){
+        <option [value]="phase.id">{{ phase.title }}</option>
+        } }
+      </select>
+      <div
+        *ngIf="
+          phaseForm.get('selectedPhase').invalid &&
+          (phaseForm.get('selectedPhase').dirty || phaseForm.get('selectedPhase').touched)
+        "
+        class="text-danger"
+      >
+        Please select a phase.
+      </div>
     </div>
-    <button type="submit" class="btn btn-success">Submit</button>
   </form>
+  @if(phaseForm.get('selectedPhase').invalid==false){
+  <div class="mx-2 mb-2 mt-2">
+    <button type="submit" class="btn btn-outline-success" (click)="addRow()">Add Row</button>
+    <form [formGroup]="forms" (ngSubmit)="onSubmit()">
+      <div formArrayName="formitem">
+        <table class="table">
+          <thead>
+            <tr>
+              @for(colums of displayedColumns;track colums){
+              <th>{{ colums }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let f of getformitems().controls; let i = index" [formGroupName]="i">
+              <td>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="noofresources"
+                  formControlName="noofresources"
+                />
+              </td>
+              <td><input type="text" class="form-control" id="role" formControlName="role" /></td>
+              <td>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="availability"
+                  formControlName="availability"
+                />
+              </td>
+              <td>
+                <input type="text" class="form-control" id="duration" formControlName="duration" />
+              </td>
+              <td>
+                <i class="fs-2 bi-trash-fill danger text-danger" (click)="removeRow(i)"></i>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <button type="submit" class="btn btn-success">Submit</button>
+    </form>
+    <p class="border-b mt-1 mb-1"></p>
+  </div>
+  }
 </div>

@@ -12,7 +12,7 @@ namespace Promact.CustomerSuccess.Platform.Services.Dtos
         public DateTime MeetingDate { get; set; }
         public string MoMLink { get; set; }
 
-        public string Comments { get; set; }
+        public string Comments { get; set; }    
 
         public int Duration { get; set; }
     }

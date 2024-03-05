@@ -38,12 +38,13 @@ export class HomeComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private fb: FormBuilder,
-    private projectService:ProjectService
+    private projectService: ProjectService
   ) {
     console.log(this.projectService.getAllProjects());
   }
 
   ngOnInit(): void {
+
     const subscription = this.projectService.getAllProjects().subscribe(
       (data) => {
         console.log('Projects:',data);

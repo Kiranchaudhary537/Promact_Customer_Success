@@ -1,45 +1,95 @@
 import { NgFor } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import {
+  AbstractControl,
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { projectResourceModel } from 'src/app/Model/ProjectResourceModel';
+import { ProjectResourceService } from 'src/app/Services/projectResourceService';
 
 @Component({
-  standalone:true,
+  standalone: true,
   selector: 'project-route',
   templateUrl: './project-resources.component.html',
   styleUrls: ['./project-resources.component.scss'],
-  imports:[RouterLink,ReactiveFormsModule,NgFor]
+  imports: [RouterLink, ReactiveFormsModule, NgFor],
 })
 export class ProjectResources implements OnInit {
+  data: Array<projectResourceModel> = [];
+  projectId: string = ';';
+  resourcesForms: FormGroup = new FormGroup({
+    resourcesitems: new FormGroup({
+      name: new FormControl(''),
+      role: new FormControl(''),
+      startDate: new FormControl(''),
+      endDate: new FormControl(''),
+      allocationPercentage: new FormControl(''),
+      comment: new FormControl(''),
+    }),
+  });
+  displayedColumns = ['role', 'allocationPercentage', 'startDate', 'endDate', 'comment'];
 
-
-  resourcesForms: FormGroup;
-  displayedColumns = ['name', 'role', 'startDate', 'endDate', 'comment'];
-
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private projectResourceService: ProjectResourceService,
+    private route: ActivatedRoute
+  ) {
+    this.projectId = this.route.snapshot.pathFromRoot[1].params['id'];
   }
 
   ngOnInit(): void {
-    this.initializeForm();
+    this.projectResourceService.getAllProjects().subscribe(
+      data => {
+        console.log('Projects:', data);
+        this.data = data;
+        this.addExistingData(data);
+      },
+      error => {
+        console.error('Error fetching projects:', error);
+      }
+    );
   }
 
-  initializeForm(): void {
+  addExistingData(data: any): void {
+    let existingData: any = [];
+    data.forEach((element: any) => {
+      existingData.push(this.existingDataFormGroup(element));
+    });
     this.resourcesForms = this.fb.group({
-      resourcesitems: this.fb.array([this.createFormGroup()])
+      resourcesitems:
+        existingData == 0 ? this.fb.array([this.createFormGroup()]) : this.fb.array(existingData),
     });
   }
 
-
-  createFormGroup(): FormGroup{
+  createFormGroup(): FormGroup {
     return this.fb.group({
+      id: [''],
       name: ['', Validators.required],
       role: ['', Validators.required],
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
-      comment: ['']
+      allocationPercentage: ['', Validators.required],
+      comment: ['', Validators.required],
     });
   }
 
+  existingDataFormGroup(e: any): FormGroup {
+    return this.fb.group({
+      id: [e.id],
+      name: [e.name, Validators.required],
+      role: [e.role, Validators.required],
+      startDate: [e.start, Validators.required],
+      endDate: [e.end, Validators.required],
+      allocationPercentage: [e.allocationPercentage, Validators.required],
+      comment: [e.comment, Validators.required],
+    });
+  }
   resourcesitems(): FormArray {
     return this.resourcesForms.get('resourcesitems') as FormArray;
   }
@@ -51,17 +101,62 @@ export class ProjectResources implements OnInit {
 
   removeRow(index: number): void {
     const approveteamArray = this.resourcesForms.get('resourcesitems') as FormArray;
+    const controlAtIndex = approveteamArray.at(index);
+    // console.log(controlAtIndex.value.id);
+    this.projectResourceService.deleteProject(controlAtIndex.value.id).subscribe(
+      data => {
+        console.log(data);
+      },
+      error => {
+        console.error('erorr');
+      }
+    );
     approveteamArray.removeAt(index);
   }
 
-
   onSubmit(): void {
-    console.log("clicked");
     console.log(this.resourcesForms);
     if (this.resourcesForms.valid) {
       console.log(this.resourcesForms.value);
-      // Here you can submit the form data to your Angular Resource
-      // For now, let's just log the form values
+      this.resourcesForms.value.resourcesitems.map(e => {
+        const modelDate: projectResourceModel = {
+          projectId: this.projectId,
+          name: e.name,
+          allocationPercentage: e.allocationPercentage,
+          start: e.startDate,
+          end: e.startEnd,
+          role: e.role,
+          comment: e.comment,
+        };
+        console.log(e);
+        if (e.id != null) {
+          this.projectResourceService.createProject(modelDate).subscribe(
+            data => {
+              console.log(data);
+            },
+            error => {
+              console.error('erorr');
+            }
+          );
+        } else {
+          this.projectResourceService.updateProject(e.id, modelDate).subscribe(
+            data => {
+              console.log(data);
+            },
+            error => {
+              console.error('erorr');
+            }
+          );
+        }
+      });
     }
   }
 }
+
+// add for new
+// update for exsting
+// const dateString = "04/03/2024";
+// const parts = dateString.split('/');
+// const formattedDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}T00:00:00.000Z`).toISOString();
+
+// console.log(formattedDate);

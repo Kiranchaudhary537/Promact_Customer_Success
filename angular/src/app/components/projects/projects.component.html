@@ -32,10 +32,14 @@
       </tr>
     </thead>
     <tbody>
+      @for(project of projectData;track project){
       <tr>
         <td>
-          <a routerLink="/projects/1" routerLinkActive="active" ariaCurrentWhenActive="page"
-            >Project A</a
+          <a
+            routerLink="/projects/{{ project.id }}"
+            routerLinkActive="active"
+            ariaCurrentWhenActive="page"
+            >{{ project.name }}</a
           >
         </td>
         <td><span class="">5/02/2024</span></td>
@@ -43,6 +47,7 @@
         <td><span class="text-dark">Dipa</span></td>
         <td><span class="badge bg-primary text-dark">3</span></td>
       </tr>
+      }
       <!-- <tr>
         <td>Project B</td>
         <td><span class="">03/03/2024</span></td>

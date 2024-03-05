@@ -6,7 +6,6 @@ namespace Promact.CustomerSuccess.Platform.Entities
 {
     public class MeetingMinute : AuditedAggregateRootWithUser<Guid, ApplicationUser>
     {
-        public MeetingMinute(Guid id) : base(id) { }
 
         [ForeignKey("Project")]
         public Guid ProjectId { get; set; }

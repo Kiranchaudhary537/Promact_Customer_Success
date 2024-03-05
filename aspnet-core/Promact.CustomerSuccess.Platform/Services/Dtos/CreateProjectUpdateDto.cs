@@ -6,6 +6,6 @@
 
         public DateTime Date { get; set; }
 
-        public required string GeneralUpdates { get; set; }
+        public  string GeneralUpdates { get; set; }
     }
 }
