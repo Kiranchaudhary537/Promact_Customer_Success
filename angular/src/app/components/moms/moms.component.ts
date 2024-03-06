@@ -18,7 +18,7 @@ import { MomService } from 'src/app/Services/momService';
   selector: 'project-route',
   templateUrl: './moms.component.html',
   styleUrls: ['./moms.component.scss'],
-  imports: [RouterLink, ReactiveFormsModule, NgFor],
+  imports: [RouterLink, ReactiveFormsModule],
 })
 export class MomsComponent implements OnInit {
   data: Array<MeetingMinute> = [];

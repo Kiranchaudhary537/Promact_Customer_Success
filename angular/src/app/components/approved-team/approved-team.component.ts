@@ -21,7 +21,7 @@ import { PhaseService } from 'src/app/Services/phaseSerivce';
   selector: 'project-route',
   templateUrl: './approved-team.component.html',
   styleUrls: ['./approved-team.component.scss'],
-  imports: [RouterLink, ReactiveFormsModule, NgFor,NgIf],
+  imports: [RouterLink, ReactiveFormsModule],
 })
 export class ApprovedTeamComponent implements OnInit,OnChanges {
   data: Array<ApprovedTeam> = [];

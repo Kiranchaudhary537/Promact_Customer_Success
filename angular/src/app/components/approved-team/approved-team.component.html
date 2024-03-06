@@ -12,15 +12,10 @@
         <option [value]="phase.id">{{ phase.title }}</option>
         } }
       </select>
-      <div
-        *ngIf="
-          phaseForm.get('selectedPhase').invalid &&
-          (phaseForm.get('selectedPhase').dirty || phaseForm.get('selectedPhase').touched)
-        "
-        class="text-danger"
-      >
-        Please select a phase.
-      </div>
+      @if(phaseForm.get('selectedPhase').invalid && (phaseForm.get('selectedPhase').dirty ||
+      phaseForm.get('selectedPhase').touched)){
+      <div class="text-danger">Please select a phase.</div>
+      }
     </div>
   </form>
   @if(phaseForm.get('selectedPhase').invalid==false){
@@ -37,7 +32,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let f of getformitems().controls; let i = index" [formGroupName]="i">
+            @for(f of getformitems().controls;track f;let i=$index){
+            <tr [formGroupName]="i">
               <td>
                 <input
                   type="text"
@@ -62,6 +58,7 @@
                 <i class="fs-2 bi-trash-fill danger text-danger" (click)="removeRow(i)"></i>
               </td>
             </tr>
+            }
           </tbody>
         </table>
       </div>

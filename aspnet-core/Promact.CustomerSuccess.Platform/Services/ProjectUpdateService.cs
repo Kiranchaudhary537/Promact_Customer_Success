@@ -1,4 +1,5 @@
-﻿using Promact.CustomerSuccess.Platform.Entities;
+﻿using Microsoft.AspNetCore.Authorization;
+using Promact.CustomerSuccess.Platform.Entities;
 using Promact.CustomerSuccess.Platform.Services.Dtos;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
@@ -7,6 +8,7 @@ using Volo.Abp.ObjectMapping;
 
 namespace Promact.CustomerSuccess.Platform.Service
 {
+    [Authorize]
     public class ProjectUpdateService : ApplicationService,
         IProjectUpdateService
     {
@@ -16,7 +18,8 @@ namespace Promact.CustomerSuccess.Platform.Service
             _repository = repository;
         }
 
-      public  async Task<ProjectUpdate> CreateAsync(CreateProjectUpdateDto input)
+        [Authorize("Project Update Create")]
+        public  async Task<ProjectUpdate> CreateAsync(CreateProjectUpdateDto input)
         {
             Console.WriteLine(input);
             try
@@ -32,7 +35,7 @@ namespace Promact.CustomerSuccess.Platform.Service
             }
         }
 
-
+        [Authorize("Project Update Read")]
         public async Task<List<ProjectUpdate>> GetAllAsync()
         {
             var entities = await _repository.GetListAsync();
@@ -45,6 +48,7 @@ namespace Promact.CustomerSuccess.Platform.Service
             return entity;
         }
 
+        [Authorize("Project Update Update")]
         public async Task<ProjectUpdate> UpdateAsync(Guid id, UpdateProjectUpdateDto input)
         {
             var entity = await _repository.GetAsync(id);
@@ -52,6 +56,8 @@ namespace Promact.CustomerSuccess.Platform.Service
             await _repository.UpdateAsync(entity, autoSave: true);
             return entity;
         }
+
+        [Authorize("Project Update Delete")]
         public async Task<String> DeleteAsync(Guid id)
         {
             try

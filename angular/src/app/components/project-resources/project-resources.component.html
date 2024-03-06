@@ -11,7 +11,9 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let f of resourcesitems().controls; let i = index" [formGroupName]="i">
+          @for(f of resourcesitems().controls;track f;let i=$index){
+
+          <tr [formGroupName]="i">
             <!-- <td><input type="text" class="form-control" id="name" formControlName="name" /></td> -->
             <td><input type="text" class="form-control" id="role" formControlName="role" /></td>
             <td>
@@ -35,6 +37,7 @@
               <i class="fs-2 bi-trash-fill danger text-danger" (click)="removeRow(i)"></i>
             </td>
           </tr>
+          }
         </tbody>
       </table>
     </div>

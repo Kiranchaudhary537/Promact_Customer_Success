@@ -4,9 +4,11 @@ using Volo.Abp.Domain.Repositories;
 using Volo.Abp.ObjectMapping;
 using Promact.CustomerSuccess.Platform.Entities;
 using Promact.CustomerSuccess.Platform.Services.Dtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Promact.CustomerSuccess.Platform
 {
+    [Authorize]
     public class ClientFeedbackService : ApplicationService, IClientFeedbackService
     {
         private readonly IRepository<ClientFeedback, Guid> _repository;
@@ -20,6 +22,22 @@ namespace Promact.CustomerSuccess.Platform
             _objectMapper = objectMapper;
         }
 
+
+        [Authorize("Client Feedback Read")]
+        public async Task<List<ClientFeedback>> GetAllAsync()
+        {
+            var entities = await _repository.GetListAsync();
+            return entities;
+        }
+
+        [Authorize("Client Feedback Read")]
+        public async Task<ClientFeedback> GetByIdAsync(Guid id)
+        {
+            var entity = await _repository.GetAsync(id);
+            return entity;
+        }
+        
+        [Authorize("Client Feedback Create")]
         public async Task<ClientFeedback> CreateAsync(CreateClientFeedbackDto input)
         {
             var entity = _objectMapper.Map<CreateClientFeedbackDto, ClientFeedback>(input);
@@ -28,18 +46,7 @@ namespace Promact.CustomerSuccess.Platform
   
         }
 
-        public async Task<List<ClientFeedback>> GetAllAsync()
-        {
-            var entities = await _repository.GetListAsync();
-            return entities;
-        }
-
-        public async Task<ClientFeedback> GetByIdAsync(Guid id)
-        {
-            var entity = await _repository.GetAsync(id);
-            return entity;
-        }
-
+        [Authorize("Client Feedback Update")]
         public async Task<ClientFeedback> UpdateAsync(Guid id, UpdateClientFeedbackDto input)
         {
             var entity = await _repository.GetAsync(id);
@@ -49,6 +56,7 @@ namespace Promact.CustomerSuccess.Platform
 
         }
 
+        [Authorize("Client Feedback Delete")]
         public async Task<String> DeleteAsync(Guid id)
         {
             try

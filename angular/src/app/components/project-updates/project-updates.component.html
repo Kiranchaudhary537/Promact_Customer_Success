@@ -12,7 +12,8 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let f of getformitems().controls; let i = index" [formGroupName]="i">
+          @for(f of getformitems().controls;track f;let i=$index){
+          <tr [formGroupName]="i">
             <td>
               <input type="text" class="form-control" id="date" formControlName="date" />
             </td>
@@ -23,6 +24,7 @@
               <i class="fs-2 bi-trash-fill danger text-danger" (click)="removeRow(i)"></i>
             </td>
           </tr>
+          }
         </tbody>
       </table>
     </div>

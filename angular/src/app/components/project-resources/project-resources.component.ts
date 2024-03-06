@@ -18,7 +18,7 @@ import { ProjectResourceService } from 'src/app/Services/projectResourceService'
   selector: 'project-route',
   templateUrl: './project-resources.component.html',
   styleUrls: ['./project-resources.component.scss'],
-  imports: [RouterLink, ReactiveFormsModule, NgFor],
+  imports: [RouterLink, ReactiveFormsModule],
 })
 export class ProjectResources implements OnInit {
   data: Array<projectResourceModel> = [];

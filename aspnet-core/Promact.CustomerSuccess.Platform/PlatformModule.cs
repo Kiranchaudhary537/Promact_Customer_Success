@@ -149,6 +149,11 @@ public class PlatformModule : AbpModule
             context.Services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());
         }
 
+        context.Services.Configure<AbpClaimsPrincipalFactoryOptions>(options =>
+        {
+            options.IsDynamicClaimsEnabled = true;
+        });
+
         ConfigureAuthentication(context);
         ConfigureBundles();
         ConfigureMultiTenancy();
@@ -169,6 +174,7 @@ public class PlatformModule : AbpModule
         context.Services.Configure<AbpClaimsPrincipalFactoryOptions>(options =>
         {
             options.IsDynamicClaimsEnabled = true;
+            // options.RemoteRefreshUrl = configure["AuthServerUrl"] + options.RemoteRefreshUrl;
         });
     }
 
@@ -361,6 +367,7 @@ public class PlatformModule : AbpModule
         app.UseStaticFiles();
         app.UseRouting();
         app.UseCors();
+        app.UseDynamicClaims();
         app.UseAuthentication();
         app.UseAbpOpenIddictValidation();
 
