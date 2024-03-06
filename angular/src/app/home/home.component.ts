@@ -12,7 +12,7 @@ import { ProjectService } from '../Services/projectService';
   styleUrls: ['./home.component.scss'],
   imports: [SharedModule, RouterOutlet, ReactiveFormsModule],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
   isModalOpen: boolean;
   inProgress: boolean;
   currentStage: number = 1;
@@ -31,28 +31,18 @@ export class HomeComponent implements OnInit {
     name: [null, [Validators.required]],
     description: [null, [Validators.required]],
   });
+
+  constructor(
+    private authService: AuthService,
+    private fb: FormBuilder
+  ) {
+  }
   get hasLoggedIn(): boolean {
     return this.authService.isAuthenticated;
   }
 
-  constructor(
-    private authService: AuthService,
-    private fb: FormBuilder,
-    private projectService: ProjectService
-  ) {
-    console.log(this.projectService.getAllProjects());
-  }
 
   ngOnInit(): void {
-
-    const subscription = this.projectService.getAllProjects().subscribe(
-      (data) => {
-        console.log('Projects:',data);
-      },
-      (error) => {
-        console.error('Error fetching projects:', error);
-      }
-    );
   }
   login() {
     this.authService.navigateToLogin();

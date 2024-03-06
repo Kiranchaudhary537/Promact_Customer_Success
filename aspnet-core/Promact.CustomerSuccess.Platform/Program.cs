@@ -1,6 +1,12 @@
+using Auth0.AspNetCore.Authentication;
+using Autofac.Core;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
 using Promact.CustomerSuccess.Platform.Data;
 using Serilog;
 using Serilog.Events;
+using System.Security.Claims;
 using Volo.Abp.Data;
 
 namespace Promact.CustomerSuccess.Platform;
@@ -43,6 +49,37 @@ public class Program
                 builder.Services.AddDataMigrationEnvironment();
             }
             await builder.AddApplicationAsync<PlatformModule>();
+            
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                          .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+                          {
+                              options.Authority = $"https://{builder.Configuration["Auth0:Domain"]}";
+                              options.Audience = builder.Configuration["Auth0:Audience"];
+                              options.TokenValidationParameters = new TokenValidationParameters
+                              {
+                                  NameClaimType = ClaimTypes.NameIdentifier,
+                                  ValidateIssuer = true,
+                                  ValidateAudience = true,
+                                  ValidateLifetime = true,
+                                  ValidateIssuerSigningKey = false,
+                                  ValidIssuer = "Auth0",
+                                  ValidAudience = "http://localhost:4200/"
+                              };
+                          })
+                          .AddOpenIdConnect("Auth0", options =>
+                          {
+                              options.Authority = $"https://{builder.Configuration["Auth0:Domain"]}";
+                              options.ClientId = builder.Configuration["Auth0:ClientId"];
+                              options.ClientSecret = builder.Configuration["Auth0:ClientSecret"];
+                              options.ResponseType = OpenIdConnectResponseType.Code;
+                              options.Scope.Clear();
+                              options.Scope.Add("openid");
+                              options.Scope.Add("profile");
+                              options.SaveTokens = true;
+                              options.CallbackPath = new PathString("/callback");
+                              options.ClaimsIssuer = "Auth0";
+                          });
+
             var app = builder.Build();
             await app.InitializeApplicationAsync();
 

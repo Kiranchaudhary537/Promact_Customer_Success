@@ -32,6 +32,7 @@ export class ClientFeedbackComponent implements OnInit {
       closure: new FormControl(''),
     }),
   });
+  unauthorizedPerson: boolean = true;
   displayedColumns = [
     'Feedback type',
     'Receive date',
@@ -56,7 +57,13 @@ export class ClientFeedbackComponent implements OnInit {
         this.addExistingData(data);
       },
       error => {
-        console.error('Error fetching projects:', error);
+        if (error.status == 403) {
+          this.unauthorizedPerson = false;
+          console.log(this.unauthorizedPerson);
+          console.warn('Unauthorized access (403):', error);
+        } else {
+          console.error('Error fetching projects:', error);
+        }
       }
     );
   }

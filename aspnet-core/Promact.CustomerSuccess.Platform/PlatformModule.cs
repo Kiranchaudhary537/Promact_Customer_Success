@@ -378,6 +378,7 @@ public class PlatformModule : AbpModule
 
         app.UseUnitOfWork();
         app.UseDynamicClaims();
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.UseSwagger();

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ProjectService } from './../../../app/Services/projectService';
 import { Project } from 'src/app/Model/ProjectModel';
+import { AuthService } from '@abp/ng.core';
 
 @Component({
   standalone:true,
@@ -15,13 +16,20 @@ export class ProjectsComponent implements OnInit {
   //variable
   projectData: Array<Project> = [];
   constructor(
-    private projectService:ProjectService
+    private projectService:ProjectService,
+    private authService: AuthService
   ) {
-    console.log(this.projectService.getAllProjects());
+
+  }
+  get hasLoggedIn(): boolean {
+    return this.authService.isAuthenticated;
   }
 
+  login(): void{
+    this.authService.navigateToLogin();
+  }
   ngOnInit(): void {
-    const subscription = this.projectService.getAllProjects().subscribe(
+     this.projectService.getAllProjects().subscribe(
       (data) => {
         console.log('Projects:', data);
         this.projectData = data;
@@ -31,4 +39,6 @@ export class ProjectsComponent implements OnInit {
       }
     );
   }
+
+
 }

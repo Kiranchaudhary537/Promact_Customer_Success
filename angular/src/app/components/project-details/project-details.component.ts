@@ -1,24 +1,18 @@
+import { AuthService } from '@abp/ng.core';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink, RouterOutlet } from '@angular/router';
 
 @Component({
-  standalone:true,
+  standalone: true,
   selector: 'project-route',
   templateUrl: './project-details.component.html',
   styleUrls: ['./project-details.component.scss'],
-  imports:[RouterLink,RouterOutlet]
+  imports: [RouterLink, RouterOutlet],
 })
-export class ProjectDetailComponent implements OnInit {
-
+export class ProjectDetailComponent {
   id: string;
 
-  constructor(
-    private route:ActivatedRoute
-  ) {
-    this.id = this.route.snapshot.params.id;
-  }
+  constructor() {}
 
-  ngOnInit(): void {
-    console.log("working");
-  }
+  ngOnInit(): void {}
 }

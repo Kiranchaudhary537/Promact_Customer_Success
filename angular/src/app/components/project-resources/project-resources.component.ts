@@ -33,6 +33,7 @@ export class ProjectResources implements OnInit {
       comment: new FormControl(''),
     }),
   });
+  unauthorizedPerson: boolean = true;
   displayedColumns = ['role', 'allocationPercentage', 'startDate', 'endDate', 'comment'];
 
   constructor(
@@ -51,7 +52,13 @@ export class ProjectResources implements OnInit {
         this.addExistingData(data);
       },
       error => {
-        console.error('Error fetching projects:', error);
+        if (error.status == 403) {
+          this.unauthorizedPerson = false;
+          console.log(this.unauthorizedPerson);
+          console.warn('Unauthorized access (403):', error);
+        } else {
+          console.error('Error fetching projects:', error);
+        }
       }
     );
   }

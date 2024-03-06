@@ -23,26 +23,27 @@ import { PhaseService } from 'src/app/Services/phaseSerivce';
   styleUrls: ['./approved-team.component.scss'],
   imports: [RouterLink, ReactiveFormsModule],
 })
-export class ApprovedTeamComponent implements OnInit,OnChanges {
+export class ApprovedTeamComponent implements OnInit {
   data: Array<ApprovedTeam> = [];
   projectId: string = '';
   phaseId: {
-    id: string,
-    number:any
-  }
+    id: string;
+    number: any;
+  };
   forms: FormGroup = new FormGroup({
     formitem: new FormGroup({
-        feedbacktype: new FormControl(''),
-        receivedate: new FormControl(''),
-        details: new FormControl(''),
-        action: new FormControl(''),
-        closure: new FormControl(''),
+      feedbacktype: new FormControl(''),
+      receivedate: new FormControl(''),
+      details: new FormControl(''),
+      action: new FormControl(''),
+      closure: new FormControl(''),
     }),
   });
-  phaseForm: FormGroup=new FormGroup({
-    selectedPhase: new FormControl('')
-  })
+  phaseForm: FormGroup = new FormGroup({
+    selectedPhase: new FormControl(''),
+  });
 
+  unauthorizedPerson: boolean = true;
   displayedColumns = ['No. Of resources', 'Role', ' Availability%', 'Duration'];
 
   allPhases: Array<Phase> = [];
@@ -53,9 +54,6 @@ export class ApprovedTeamComponent implements OnInit,OnChanges {
     private phaseService: PhaseService
   ) {
     this.projectId = this.route.snapshot.pathFromRoot[1].params['id'];
-  }
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
   }
 
   ngOnInit(): void {
@@ -75,27 +73,32 @@ export class ApprovedTeamComponent implements OnInit,OnChanges {
         this.data = data;
       },
       error => {
-        console.error('Error fetching projects:', error);
+        if (error.status == 403) {
+          this.unauthorizedPerson = false;
+          console.log(this.unauthorizedPerson);
+          console.warn('Unauthorized access (403):', error);
+        } else {
+          console.error('Error fetching projects:', error);
+        }
       }
     );
   }
 
-  onSelectedPhaseChange(value: string): void{
+  onSelectedPhaseChange(value: string): void {
     // console.log(value);
     this.addExistingData(value);
   }
 
-
-  initPhaseForm(): void{
+  initPhaseForm(): void {
     this.phaseForm = this.fb.group({
-      selectedPhase: ['', Validators.required]
+      selectedPhase: ['', Validators.required],
     });
   }
 
-  addExistingData(phaseId:string): void {
+  addExistingData(phaseId: string): void {
     let existingData: any = [];
     this.data.forEach((element: any) => {
-      if (element.phaseId==phaseId) {
+      if (element.phaseId == phaseId) {
         existingData.push(this.existingFormGroup(element));
       }
     });
@@ -105,11 +108,10 @@ export class ApprovedTeamComponent implements OnInit,OnChanges {
     });
   }
 
-
-  existingFormGroup(e:any): FormGroup {
+  existingFormGroup(e: any): FormGroup {
     return this.fb.group({
       id: [e.id],
-      phaseId:[e.phaseId],
+      phaseId: [e.phaseId],
       noofresources: [e.numberOfResources, Validators.required],
       role: [e.role, Validators.required],
       availability: [e.availabilityPercentage, Validators.required],
@@ -120,7 +122,7 @@ export class ApprovedTeamComponent implements OnInit,OnChanges {
   createFormGroup(): FormGroup {
     return this.fb.group({
       id: [''],
-      phaseId:[''],
+      phaseId: [''],
       noofresources: ['', Validators.required],
       role: ['', Validators.required],
       availability: ['', Validators.required],
@@ -153,7 +155,7 @@ export class ApprovedTeamComponent implements OnInit,OnChanges {
 
   onSubmit(): void {
     if (this.forms.valid) {
-      this.forms.value.formitem.forEach(async (e) => {
+      this.forms.value.formitem.forEach(async e => {
         try {
           const modelDate: ApprovedTeam = {
             phaseId: this.phaseForm.value.selectedPhase,
@@ -161,7 +163,7 @@ export class ApprovedTeamComponent implements OnInit,OnChanges {
             numberOfResources: e.noofresources,
             role: e.role,
             availabilityPercentage: e.availability,
-            duration: e.duration
+            duration: e.duration,
           };
           console.log(modelDate);
 

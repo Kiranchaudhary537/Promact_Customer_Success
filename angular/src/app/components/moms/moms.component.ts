@@ -31,6 +31,7 @@ export class MomsComponent implements OnInit {
       comments: new FormControl(''),
     }),
   });
+  unauthorizedPerson: boolean = true;
   displayedColumns = ['Date', 'Duration', 'MoM Link', 'Comments'];
 
   constructor(
@@ -49,7 +50,13 @@ export class MomsComponent implements OnInit {
         this.addExistingData(data);
       },
       error => {
-        console.error('Error fetching projects:', error);
+        if (error.status == 403) {
+          this.unauthorizedPerson = false;
+          console.log(this.unauthorizedPerson);
+          console.warn('Unauthorized access (403):', error);
+        } else {
+          console.error('Error fetching projects:', error);
+        }
       }
     );
   }
