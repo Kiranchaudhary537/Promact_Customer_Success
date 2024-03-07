@@ -12,6 +12,7 @@ import {
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MeetingMinute } from 'src/app/Model/MomModel';
 import { MomService } from 'src/app/Services/momService';
+import { convertToDate, dateFormatValidator } from 'src/app/utils/dateFormatValidator';
 
 @Component({
   standalone: true,
@@ -50,6 +51,7 @@ export class MomsComponent implements OnInit {
         this.addExistingData(data);
       },
       error => {
+        this.addExistingData([]);
         if (error.status == 403) {
           this.unauthorizedPerson = false;
           console.log(this.unauthorizedPerson);
@@ -75,7 +77,7 @@ export class MomsComponent implements OnInit {
   createFormGroup(): FormGroup {
     return this.fb.group({
       id: [''],
-      date: ['', Validators.required],
+      date: ['', [Validators.required, dateFormatValidator()]],
       duration: ['', Validators.required],
       links: ['', Validators.required],
       comments: ['', Validators.required],
@@ -85,7 +87,8 @@ export class MomsComponent implements OnInit {
   existingDataFormGroup(e: any): FormGroup {
     return this.fb.group({
       id: [e.id],
-      date: [e.meetingDate, Validators.required],
+      date: [convertToDate(e.meetingDate), [Validators.required, dateFormatValidator()]],
+
       duration: [e.duration, Validators.required],
       links: [e.moMLink, Validators.required],
       comments: [e.comments, Validators.required],

@@ -1,11 +1,11 @@
 export interface ClientFeedback {
   id?: string;
   projectId: string;
-  dateReceived: Date;
+  dateReceived: string;
   feedbackType: FeedbackType;
   detailedFeedback: string;
   actionTaken: boolean;
-  closureDate?: Date;
+  closureDate?: string;
 }
 
 export enum FeedbackType {

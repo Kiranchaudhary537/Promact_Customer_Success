@@ -1,10 +1,10 @@
 @if (unauthorizedPerson==false) {
-  <div>
-    <div class="container mt-5">
-      <h3 class="text-center m-1">You are not authorized to view this table.</h3>
-    </div>
+<div>
+  <div class="container mt-5">
+    <h3 class="text-center m-1">You are not authorized to view this table.</h3>
   </div>
-  } @if (unauthorizedPerson==true) {
+</div>
+} @if (unauthorizedPerson==true) {
 <div class="container mt-2">
   <button type="submit" class="btn btn-outline-success" (click)="addRow()">Add Row</button>
   <form [formGroup]="forms" (ngSubmit)="onSubmit()">
@@ -21,10 +21,22 @@
           @for(f of getformitems().controls;track f;let i=$index){
           <tr [formGroupName]="i">
             <td>
-              <input type="text" class="form-control" id="date" formControlName="date" />
+              <input
+                type="text"
+                class="form-control"
+                id="date"
+                formControlName="date"
+                placeholder="yyyy-mm-dd"
+              />
             </td>
             <td>
-              <input type="text" class="form-control" id="updates" formControlName="updates" />
+              <input
+                type="text"
+                class="form-control"
+                id="updates"
+                placeholder="text"
+                formControlName="updates"
+              />
             </td>
             <td>
               <i class="fs-2 bi-trash-fill danger text-danger" (click)="removeRow(i)"></i>
@@ -37,4 +49,4 @@
     <button type="submit" class="btn btn-success">Submit</button>
   </form>
 </div>
-  }
+}

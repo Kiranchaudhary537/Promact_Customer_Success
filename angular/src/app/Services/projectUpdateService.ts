@@ -13,22 +13,22 @@ export class ProjectUpdateService {
   }
 
   getAllItem(): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}project-resources`);
+    return this.http.get<any>(`${this.baseUrl}project-update`);
   }
 
   createItem(projectData: any): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}project-resources`, projectData);
+    return this.http.post<any>(`${this.baseUrl}project-update`, projectData);
   }
 
   getItemById(id: number): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}project-resources/${id}/by-id`);
+    return this.http.get<any>(`${this.baseUrl}project-update/${id}/by-id`);
   }
 
   updateItem(id: number, projectData: any): Observable<any> {
-    return this.http.put<any>(`${this.baseUrl}project-resources/${id}`, projectData);
+    return this.http.put<any>(`${this.baseUrl}project-update/${id}`, projectData);
   }
 
   deleteItem(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.baseUrl}project-resources/${id}`);
+    return this.http.delete<any>(`${this.baseUrl}project-update/${id}`);
   }
 }

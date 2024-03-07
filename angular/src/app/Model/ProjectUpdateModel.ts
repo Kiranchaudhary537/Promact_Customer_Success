@@ -1,5 +1,5 @@
 export interface ProjectUpdate {
   projectId: string;
-  date: Date;
+  date: string;
   generalUpdates: string;
 }

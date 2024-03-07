@@ -12,6 +12,7 @@ import {
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ProjectUpdate } from 'src/app/Model/ProjectUpdateModel';
 import { ProjectUpdateService } from 'src/app/Services/projectUpdateService';
+import { convertToDate, dateFormatValidator } from 'src/app/utils/dateFormatValidator';
 
 @Component({
   standalone: true,
@@ -52,6 +53,7 @@ export class ProjectUpdatesComponent implements OnInit {
         this.addExistingData(data);
       },
       error => {
+        this.addExistingData([]);
         if (error.status == 403) {
           this.unauthorizedPerson = false;
           console.log(this.unauthorizedPerson);
@@ -77,7 +79,7 @@ export class ProjectUpdatesComponent implements OnInit {
   createFormGroup(): FormGroup {
     return this.fb.group({
       id: [''],
-      date: ['', Validators.required],
+      date: ['', [Validators.required, dateFormatValidator()]],
       updates: ['', Validators.required],
     });
   }
@@ -85,8 +87,8 @@ export class ProjectUpdatesComponent implements OnInit {
   existingDataFormGroup(e: any): FormGroup {
     return this.fb.group({
       id: [e.id],
-      date: [e.name, Validators.required],
-      updates: [e.role, Validators.required],
+      date: [convertToDate(e.date), [Validators.required, dateFormatValidator()]],
+      updates: [e.generalUpdates, Validators.required],
     });
   }
 
@@ -114,7 +116,7 @@ export class ProjectUpdatesComponent implements OnInit {
             generalUpdates: e.updates,
           };
           console.log(e);
-          if (e.id != null) {
+          if (e.id == '') {
             const data = await this.projectUpdateService.createItem(modelDate).toPromise();
             console.log(data);
           } else {

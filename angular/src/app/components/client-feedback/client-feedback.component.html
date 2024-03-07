@@ -22,12 +22,10 @@
 
           <tr [formGroupName]="i">
             <td>
-              <input
-                type="text"
-                class="form-control"
-                id="feedbacktype"
-                formControlName="feedbacktype"
-              />
+              <select class="form-control" id="feedbacktype" formControlName="feedbacktype">
+                <option value="Positive">Positive</option>
+                <option value="Negative">Negative</option>
+              </select>
             </td>
             <td>
               <input
@@ -35,16 +33,29 @@
                 class="form-control"
                 id="receivedate"
                 formControlName="receivedate"
+                placeholder="yyyy-mm-dd"
               />
             </td>
             <td>
-              <input type="text" class="form-control" id="details" formControlName="details" />
+              <input 
+              type="text" 
+              class="form-control" id="details" 
+              formControlName="details"
+              placeholder="text"
+               />
             </td>
             <td>
-              <input type="text" class="form-control" id="action" formControlName="action" />
+              <select class="form-control" id="feedbacktype" formControlName="action">
+                <option value="true">True</option>
+                <option value="false">False</option>
+              </select>
             </td>
             <td>
-              <input type="text" class="form-control" id="closure" formControlName="closure" />
+              <input type="text" class="form-control"
+               id="closure" 
+               formControlName="closure"
+               placeholder="yyyy-mm-dd"
+                />
             </td>
             <td>
               <i class="fs-2 bi-trash-fill danger text-danger" (click)="removeRow(i)"></i>

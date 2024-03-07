@@ -6,8 +6,8 @@ export interface projectResourceModel extends Project {
   projectId: string;
   project?: Project;
   allocationPercentage: number;
-  start: Date;
-  end: Date;
+  start: string;
+  end: string;
   role: string;
-  comment:string,
+  comment?:string,
 }

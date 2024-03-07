@@ -12,6 +12,7 @@ import {
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ClientFeedback } from 'src/app/Model/ClientFeedbackModel';
 import { ClientFeedbackService } from 'src/app/Services/clientfeedbackService';
+import { convertToDate, dateFormatValidator } from 'src/app/utils/dateFormatValidator';
 
 @Component({
   standalone: true,
@@ -41,6 +42,7 @@ export class ClientFeedbackComponent implements OnInit {
     'Closure Date',
   ];
 
+  feedbackType=['Positive','Negative'];
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
@@ -57,6 +59,7 @@ export class ClientFeedbackComponent implements OnInit {
         this.addExistingData(data);
       },
       error => {
+        this.addExistingData([]);
         if (error.status == 403) {
           this.unauthorizedPerson = false;
           console.log(this.unauthorizedPerson);
@@ -82,21 +85,21 @@ export class ClientFeedbackComponent implements OnInit {
     return this.fb.group({
       id: [''],
       feedbacktype: ['', Validators.required],
-      receivedate: ['', Validators.required],
+      receivedate: ['', [Validators.required, dateFormatValidator()]],
       details: ['', Validators.required],
       action: ['', Validators.required],
-      closure: ['', Validators.required],
+      closure: ['', [Validators.required, dateFormatValidator()]],
     });
   }
 
   existingDataFormGroup(e: any): FormGroup {
     return this.fb.group({
       id: [e.id],
-      feedbacktype: [e.feedbackType, Validators.required],
-      receivedate: [e.dateReceived, Validators.required],
+      feedbacktype: [this.feedbackType[e.feedbackType], Validators.required],
+      receivedate: [convertToDate(e.dateReceived), [Validators.required, dateFormatValidator()]],
       details: [e.detailedFeedback, Validators.required],
       action: [e.actionTaken, Validators.required],
-      closure: [e.closureDate, Validators.required],
+      closure: [convertToDate(e.closureDate), [Validators.required, dateFormatValidator()]],
     });
   }
 
@@ -124,6 +127,7 @@ export class ClientFeedbackComponent implements OnInit {
   }
 
   onSubmit(): void {
+    console.log(this.forms)
     if (this.forms.valid) {
       this.forms.value.formitem.forEach(async e => {
         try {

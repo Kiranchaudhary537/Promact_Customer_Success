@@ -5,6 +5,8 @@ namespace Promact.CustomerSuccess.Platform.Entities
 {
     public class Project : AuditedEntity<Guid>
     {
+
+        public required Guid Id { get; set; }
         public required string Name { get; set; }
         public required string Description { get; set; }
         public virtual ICollection<ProjectResource>? Resources { get; set; }

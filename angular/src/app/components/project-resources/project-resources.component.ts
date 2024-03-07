@@ -12,6 +12,7 @@ import {
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { projectResourceModel } from 'src/app/Model/ProjectResourceModel';
 import { ProjectResourceService } from 'src/app/Services/projectResourceService';
+import { convertToDate, dateFormatValidator } from 'src/app/utils/dateFormatValidator';
 
 @Component({
   standalone: true,
@@ -30,11 +31,10 @@ export class ProjectResources implements OnInit {
       startDate: new FormControl(''),
       endDate: new FormControl(''),
       allocationPercentage: new FormControl(''),
-      comment: new FormControl(''),
     }),
   });
   unauthorizedPerson: boolean = true;
-  displayedColumns = ['role', 'allocationPercentage', 'startDate', 'endDate', 'comment'];
+  displayedColumns = ['Name','Role', 'AllocationPercentage', 'StartDate', 'EndDate', 'Comment'];
 
   constructor(
     private fb: FormBuilder,
@@ -52,12 +52,14 @@ export class ProjectResources implements OnInit {
         this.addExistingData(data);
       },
       error => {
+        this.addExistingData([]);
         if (error.status == 403) {
           this.unauthorizedPerson = false;
           console.log(this.unauthorizedPerson);
           console.warn('Unauthorized access (403):', error);
         } else {
           console.error('Error fetching projects:', error);
+          alert("Error while fetching data");
         }
       }
     );
@@ -70,7 +72,7 @@ export class ProjectResources implements OnInit {
     });
     this.resourcesForms = this.fb.group({
       resourcesitems:
-        existingData == 0 ? this.fb.array([this.createFormGroup()]) : this.fb.array(existingData),
+        existingData.length == 0 ? this.fb.array([this.createFormGroup()]) : this.fb.array(existingData),
     });
   }
 
@@ -79,10 +81,9 @@ export class ProjectResources implements OnInit {
       id: [''],
       name: ['', Validators.required],
       role: ['', Validators.required],
-      startDate: ['', Validators.required],
-      endDate: ['', Validators.required],
+      startDate: ['', [Validators.required,dateFormatValidator()]],
+      endDate: ['', [Validators.required,dateFormatValidator()]],
       allocationPercentage: ['', Validators.required],
-      comment: ['', Validators.required],
     });
   }
 
@@ -91,10 +92,9 @@ export class ProjectResources implements OnInit {
       id: [e.id],
       name: [e.name, Validators.required],
       role: [e.role, Validators.required],
-      startDate: [e.start, Validators.required],
-      endDate: [e.end, Validators.required],
+      startDate: [convertToDate(e.start), [Validators.required,dateFormatValidator()]],
+      endDate: [convertToDate(e.end), [Validators.required,dateFormatValidator()]],
       allocationPercentage: [e.allocationPercentage, Validators.required],
-      comment: [e.comment, Validators.required],
     });
   }
   resourcesitems(): FormArray {
@@ -122,21 +122,20 @@ export class ProjectResources implements OnInit {
   }
 
   onSubmit(): void {
-    console.log(this.resourcesForms);
     if (this.resourcesForms.valid) {
-      console.log(this.resourcesForms.value);
       this.resourcesForms.value.resourcesitems.map(e => {
         const modelDate: projectResourceModel = {
           projectId: this.projectId,
           name: e.name,
           allocationPercentage: e.allocationPercentage,
           start: e.startDate,
-          end: e.startEnd,
+          end: e.endDate,
           role: e.role,
-          comment: e.comment,
         };
-        console.log(e);
-        if (e.id != null) {
+
+        console.log("id ",e.id);
+        if (e.id == '') {
+          console.log
           this.projectResourceService.createProject(modelDate).subscribe(
             data => {
               console.log(data);

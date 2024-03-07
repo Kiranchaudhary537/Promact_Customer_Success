@@ -29,6 +29,10 @@ const routes: Routes = [
     component: ProjectDetailComponent,
     children: [
       {
+        path: '',
+        component: ProjectResources,
+      },
+      {
         path: 'approvedteam',
         component: ApprovedTeamComponent,
       },

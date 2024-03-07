@@ -21,7 +21,7 @@
           @for(f of resourcesitems().controls;track f;let i=$index){
 
           <tr [formGroupName]="i">
-            <!-- <td><input type="text" class="form-control" id="name" formControlName="name" /></td> -->
+            <td><input type="text" class="form-control" id="name" formControlName="name" /></td>
             <td><input type="text" class="form-control" id="role" formControlName="role" /></td>
             <td>
               <input
@@ -32,14 +32,14 @@
               />
             </td>
             <td>
-              <input type="text" class="form-control" id="startDate" formControlName="startDate" />
+              <input type="text" placeholder="yyyy-mm-dd" class="form-control" id="startDate" formControlName="startDate" />
             </td>
             <td>
               <input type="text" class="form-control" id="endDate" formControlName="endDate" />
             </td>
-            <td>
+            <!-- <td>
               <input type="text" class="form-control" id="comment" formControlName="comment" />
-            </td>
+            </td> -->
             <td>
               <i class="fs-2 bi-trash-fill danger text-danger" (click)="removeRow(i)"></i>
             </td>
