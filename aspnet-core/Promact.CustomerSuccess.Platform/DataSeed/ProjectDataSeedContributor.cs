@@ -68,13 +68,21 @@ namespace Promact.CustomerSuccess.Platform.DataSeed
             {
                 Title = "Phase 1 - Planning",
                 StartDate = DateTime.Now,
-                ProjectId = projects[0].Id
+                ProjectId = projects[0].Id,
+                CompletionDate= DateTime.Now.AddDays(2),
+                ApprovalDate= DateTime.Now.AddDays(7),
+                Status=PhaseStatus.Delayed,
+                Comments="Initial phase"
             },
             new Phase
             {
                 Title = "Phase 2 - Development",
-                StartDate = DateTime.Now.AddDays(7),
-                ProjectId = projects[1].Id
+                StartDate = DateTime.Now,
+                ProjectId = projects[1].Id,
+                CompletionDate= DateTime.Now.AddDays(7),
+                ApprovalDate= DateTime.Now.AddDays(1),
+                Status=PhaseStatus.OnTime,
+                Comments="Initail phase"
             },
 
         };
